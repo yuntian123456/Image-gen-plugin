@@ -1,0 +1,34 @@
+{
+  "name": "image-generator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "docker:build": "docker build -t image-gen-plugin .",
+    "docker:start": "docker run -p 3000:3000 image-gen-plugin",
+    "docker:compose": "docker-compose up -d",
+    "docker:compose:build": "docker-compose up -d --build",
+    "docker:compose:down": "docker-compose down",
+    "docker:tag": "docker tag image-gen-plugin USERNAME/image-gen-plugin:latest",
+    "docker:push": "docker push USERNAME/image-gen-plugin:latest",
+    "docker:publish": "npm run docker:build && npm run docker:tag && npm run docker:push"
+  },
+  "dependencies": {
+    "@lobehub/chat-plugin-sdk": "latest",
+    "@lobehub/chat-plugins-gateway": "latest",
+    "next": "13.4.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.0",
+    "@types/react": "^18.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "@typescript-eslint/parser": "^8.26.1",
+    "eslint": "^8.40.0",
+    "eslint-config-next": "^15.2.1",
+    "typescript": "^5.0.4"
+  }
+}

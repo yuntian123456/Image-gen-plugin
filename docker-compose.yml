@@ -1,0 +1,34 @@
+version: '3'
+
+networks:
+  plugin_network:
+    name: plugin_network
+    driver: bridge
+    internal: false
+
+services:
+  image-gen-plugin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env.docker
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_BASE_URL
+      - DEBUG=true
+      - LOG_LEVEL=debug
+    networks:
+      - plugin_network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        tag: "{{.Name}}"
+    # 如果需要持久化存储，可以添加volumes配置
+    # volumes:
+    #   - ./data:/app/data
