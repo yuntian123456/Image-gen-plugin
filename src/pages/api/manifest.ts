@@ -156,7 +156,7 @@ export default function handler(req: Request) {
           "default": "",
           "format": "uri",
           "title": "🔗 图片生成服务 API 地址",
-          "description": "图片生成服务的完整API地址（必填）。例如：https://your-domain.com/v1/images/generations"
+          "description": "图片生成服务的完整API地址（必填）。\n例如：https://your-domain.com/v1/images/generations"
         },
         "model": {
           "type": "string",

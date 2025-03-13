@@ -14,6 +14,20 @@
 
 不想部署可直接使用 https://image-gen-plugin.vercel.app/manifest.json 
 
+## 项目结构
+
+```
+src/
+├── pages/          # Next.js 页面和 API 路由
+│   ├── api/        # API 端点
+│   │   ├── generate.ts      # 图片生成接口
+│   │   ├── manifest.ts      # 插件清单接口
+│   │   └── test-settings.ts # 设置测试接口
+│   └── settings.tsx # 设置页面
+├── components/     # React 组件
+└── services/      # 服务层
+```
+
 ## 部署步骤
 
 ### 方法一：Vercel 部署
@@ -50,15 +64,13 @@
    docker-compose up -d
    ```
 
-3. **访问服务**
-   服务启动后，确认无报错：
-   ```
-   lobechat里设置插件的 manifest 地址为：
-   ```
-   http://localhost:3000/manifest.json 或者配置的IP或域名/manifest.json
-   ```
+## 环境变量
 
-更多 Docker 部署详情，请参阅 [Docker 部署指南](README.docker.md)。
+- `NEXT_PUBLIC_BASE_URL`: 插件访问的基础 URL（必填）
+- `DEBUG`: 是否启用调试日志（可选）
+- `LOG_LEVEL`: 日志级别（可选）
+
+更多部署和配置说明请参考 [README.docker.md](README.docker.md)。
 
 ## 配置插件
 
