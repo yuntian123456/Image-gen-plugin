@@ -3,6 +3,8 @@ import { Settings, ImageGenResponse } from '../../types';
 
 export const config = {
   runtime: 'edge',
+  regions: ['hkg1'],
+  maxDuration: 60,
 };
 
 // 默认图片尺寸
@@ -15,6 +17,27 @@ const MIN_SIZE = 512;
 const MAX_SIZE = 1360;
 const MIN_SAMPLE_STRENGTH = 0.1;
 const MAX_SAMPLE_STRENGTH = 1.0;
+
+// 请求超时时间（毫秒）
+const REQUEST_TIMEOUT = 55000;
+
+// 创建带超时的 fetch 函数
+const fetchWithTimeout = async (url: string, options: RequestInit, timeout: number) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+};
 
 export default async function handler(req: Request) {
   // 添加CORS头
@@ -127,46 +150,52 @@ export default async function handler(req: Request) {
     });
 
     // 发送请求到图片生成服务
-    const response = await fetch(`${apiUrl}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model,
-        prompt,
-        negative_prompt: negativePrompt,
-        width: Number(width),
-        height: Number(height),
-        sample_strength: sample_strength
-      })
-    });
+    console.log('发送请求到:', apiUrl);
+    try {
+      const response = await fetchWithTimeout(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model,
+          prompt,
+          negative_prompt: negativePrompt,
+          width: Number(width),
+          height: Number(height),
+          sample_strength: sample_strength
+        })
+      }, REQUEST_TIMEOUT);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API响应错误:', response.status, errorText);
-      // 将HTTP状态码映射到合适的错误代码
-      const errorCode = response.status === 401 ? 401 : 
-                       response.status === 403 ? 403 : 
-                       response.status === 404 ? 404 : 
-                       response.status === 429 ? 429 : 500;
-      return createErrorResponse(errorCode, `图片生成服务错误: ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API响应错误:', response.status, errorText);
+        // 将HTTP状态码映射到合适的错误代码
+        const errorCode = response.status === 401 ? 401 : 
+                         response.status === 403 ? 403 : 
+                         response.status === 404 ? 404 : 
+                         response.status === 429 ? 429 : 500;
+        return createErrorResponse(errorCode, `图片生成服务错误: ${errorText}`);
+      }
+
+      const result = await response.json() as ImageGenResponse;
+      console.log('API响应结果:', result);
+
+      if (!result.data || result.data.length === 0) {
+        return createErrorResponse(500, '未能生成图片');
+      }
+
+      // 创建Markdown内容，包含提示词和图片尺寸信息
+      const markdownContent = `提示词: "*${prompt}*" ${negativePrompt ? `\n反向提示词: "${negativePrompt}"` : ''} ${width}x${height}\n\n${result.data.map((item, index) => `![生成的图片${index + 1}](${item.url})`).join(' | ')} |\n|---|---|---|---|`;
+
+      return new Response(markdownContent, {
+        headers
+      });
+    } catch (error) {
+      console.error('生成端点 - 错误:', error);
+      return createErrorResponse(500, String(error));
     }
-
-    const result = await response.json() as ImageGenResponse;
-    console.log('API响应结果:', result);
-
-    if (!result.data || result.data.length === 0) {
-      return createErrorResponse(500, '未能生成图片');
-    }
-
-    // 创建Markdown内容，包含提示词和图片尺寸信息
-    const markdownContent = `提示词: "*${prompt}*" ${negativePrompt ? `\n反向提示词: "${negativePrompt}"` : ''} ${width}x${height}\n\n${result.data.map((item, index) => `![生成的图片${index + 1}](${item.url})`).join(' | ')} |\n|---|---|---|---|`;
-
-    return new Response(markdownContent, {
-      headers
-    });
   } catch (error) {
     console.error('生成端点 - 错误:', error);
     return createErrorResponse(500, String(error));

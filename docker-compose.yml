@@ -8,6 +8,7 @@ networks:
 
 services:
   image-gen-plugin:
+    container_name: Lobe-image-gen-plugin
     build:
       context: .
       dockerfile: Dockerfile
