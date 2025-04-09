@@ -130,9 +130,9 @@ export default async function handler(req: Request) {
       height = requestBody.height;
     }
 
-    // 取消确保宽度和高度是8的倍数的限制
-    // width = Math.floor(width / 8) * 8;
-    // height = Math.floor(height / 8) * 8;
+    // 确保宽度和高度是8的倍数
+    width = Math.floor(width / 8) * 8;
+    height = Math.floor(height / 8) * 8;
 
     // 移除尺寸范围限制
     // width = Math.max(MIN_SIZE, Math.min(MAX_SIZE, width));
