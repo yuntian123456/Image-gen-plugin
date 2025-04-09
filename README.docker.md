@@ -172,7 +172,7 @@ version: '3'
 
 services:
   image-gen-plugin:
-    image: yourusername/image-gen-plugin:latest
+    image: yuntian123456/image-gen-plugin:main
     container_name: Lobe-image-gen-plugin
     ports:
       - "3000:3000"
