@@ -13,7 +13,8 @@ const DEFAULT_HEIGHT = 1024;
 const DEFAULT_SAMPLE_STRENGTH = 0.5;
 
 // 图片尺寸限制
-// 移除尺寸限制，仅保留sample_strength限制
+const MIN_SIZE = 512;
+const MAX_SIZE = 2016;
 const MIN_SAMPLE_STRENGTH = 0.1;
 const MAX_SAMPLE_STRENGTH = 1.0;
 
@@ -134,9 +135,9 @@ export default async function handler(req: Request) {
     width = Math.floor(width / 8) * 8;
     height = Math.floor(height / 8) * 8;
 
-    // 移除尺寸范围限制
-    // width = Math.max(MIN_SIZE, Math.min(MAX_SIZE, width));
-    // height = Math.max(MIN_SIZE, Math.min(MAX_SIZE, height));
+    // 确保宽度和高度在有效范围内
+    width = Math.max(MIN_SIZE, Math.min(MAX_SIZE, width));
+    height = Math.max(MIN_SIZE, Math.min(MAX_SIZE, height));
 
     console.log('请求参数:', {
       apiUrl,

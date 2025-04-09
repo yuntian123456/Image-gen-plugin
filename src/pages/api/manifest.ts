@@ -82,14 +82,18 @@ export default function handler(req: Request) {
             "width": {
               "type": "number",
               "default": 1024,
+              "minimum": 512,
+              "maximum": 2016,
               "multipleOf": 8,
-              "description": "图片宽度（像素，必须是8的倍数）"
+              "description": "图片宽度（像素，512-2016之间，必须是8的倍数）"
             },
             "height": {
               "type": "number",
               "default": 1024,
+              "minimum": 512,
+              "maximum": 2016,
               "multipleOf": 8,
-              "description": "图片高度（像素，必须是8的倍数）"
+              "description": "图片高度（像素，512-2016之间，必须是8的倍数）"
             },
             "sample_strength": {
               "type": "number",
