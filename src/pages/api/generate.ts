@@ -8,13 +8,11 @@ export const config = {
 };
 
 // 默认图片尺寸
-const DEFAULT_WIDTH = 1024;
-const DEFAULT_HEIGHT = 1024;
+const DEFAULT_WIDTH = 1664;
+const DEFAULT_HEIGHT = 936;
 const DEFAULT_SAMPLE_STRENGTH = 0.5;
 
-// 图片尺寸限制
-const MIN_SIZE = 512;
-const MAX_SIZE = 1360;
+// 精细度限制
 const MIN_SAMPLE_STRENGTH = 0.1;
 const MAX_SAMPLE_STRENGTH = 1.0;
 
@@ -131,13 +129,7 @@ export default async function handler(req: Request) {
       height = requestBody.height;
     }
 
-    // 确保宽度和高度是8的倍数
-    width = Math.floor(width / 8) * 8;
-    height = Math.floor(height / 8) * 8;
-
-    // 确保宽度和高度在有效范围内
-    width = Math.max(MIN_SIZE, Math.min(MAX_SIZE, width));
-    height = Math.max(MIN_SIZE, Math.min(MAX_SIZE, height));
+    // 不再强制图片尺寸为8的倍数，也不再强制限制尺寸范围
 
     console.log('请求参数:', {
       apiUrl,
