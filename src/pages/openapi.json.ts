@@ -46,13 +46,13 @@ export default function handler(req: Request) {
                     },
                     "width": {
                       "type": "integer",
-                      "description": "图片宽度，范围512-1360，必须是8的倍数",
-                      "default": 1024
+                      "description": "图片宽度",
+                      "default": 1664
                     },
                     "height": {
                       "type": "integer",
-                      "description": "图片高度，范围512-1360，必须是8的倍数",
-                      "default": 1024
+                      "description": "图片高度",
+                      "default": 936
                     },
                     "sample_strength": {
                       "type": "number",
